@@ -30,6 +30,8 @@ Route::resource('brands',BrandController::class);
 Route::resource('categories',CategoryController::class);
 Route::resource('products',ProductController::class);
 
+Route::get('/product/inactive/{id}',[ProductController::class,'ProductInactive'])->name('products.inactive');
+Route::get('/product/active/{id}',[ProductController::class,'ProductActive'])->name('products.active');
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -41,7 +43,5 @@ Route::middleware('auth')->group(function () {
 
 
 });
-Route::get('/product/inactive/{id}',[ProductController::class,'ProductInactive'])->name('products.inactive');
-Route::get('/product/active/{id}',[ProductController::class,'ProductActive'])->name('products.active');
 
 require __DIR__.'/auth.php';
