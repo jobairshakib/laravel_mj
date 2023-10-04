@@ -17,10 +17,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-Route::get('/', function () {
+
+Route::get('/dashboard', function () {
     return view('admin.admin_dashboard');
 });
 
@@ -45,3 +43,12 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+
+
+
+//frontend
+
+Route::get('/', function () {
+    return view('frontend.index');
+});
