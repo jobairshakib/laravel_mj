@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Image;
 
@@ -30,17 +31,33 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
-        $image =$request->file('brand_image');
-        $fileName = hexdec(uniqid()).'.'.
-            $image->getClientOriginalExtension();
-        'Image'::make($image)->resize(300,300)->save('upload/brand/'.$fileName);
-        $save_url = 'upload/brand/'.$fileName;
-        Brand::create([
-            'brand_name'=>$request->brand_name,
-            'brand_slug'=>strtolower(str_replace('','-',$request->brand_name)),
-           'brand_image'=>$save_url,
-        ]);
-        return redirect()->route('brands.index');
+        // $image =$request->file('brand_image');
+        // $fileName = hexdec(uniqid()).'.'.
+        //     $image->getClientOriginalExtension();
+        // 'Image'::make($image)->resize(300,300)->save('upload/brand/'.$fileName);
+        // $save_url = 'upload/brand/'.$fileName;
+        // Brand::create([
+        //     'brand_name'=>$request->brand_name,
+        //     'brand_slug'=>strtolower(str_replace('','-',$request->brand_name)),
+        //    'brand_image'=>$save_url,
+        // ]);
+        
+
+        try {
+            $request -> validate([
+                'brand_name' => ['required'],
+                'brand_image' => ['required']
+            ]);
+            Brand::create([
+                'brand_name'=>$request->brand_name,
+                'brand_slug'=>strtolower(str_replace('','-',$request->brand_name)),
+                'brand_image'=>$this->uploadImage(request()->file('brand_image'))
+            ]);
+            return redirect()->route('brands.index')->withMessage('Brand Create Successfully');
+        }catch(QueryException $e){
+            return redirect()->back()->withInput()->withErrors($e->getMessage());
+
+        }
 
     }
 
@@ -69,27 +86,66 @@ class BrandController extends Controller
      */
     public function update(Request $request, Brand $brand)
     {
-        $image =$request->file('brand_image');
-        $fileName = hexdec(uniqid()).'.'.
-            $image->getClientOriginalExtension();
-        'Image'::make($image)->resize(300,300)->save('upload/brand/'.$fileName);
-        $save_url = 'upload/brand/'.$fileName;
-        $brand->update([
-            'brand_name'=>$request->brand_name,
-            'brand_slug'=>strtolower(str_replace('','-',$request->brand_name)),
-            'brand_image'=>$save_url,
-        ]);
 
-        return redirect()->route('brands.index');
+
+        try {
+            $request -> validate([
+                'brand_name' => ['required'],
+                // 'brand_image' => ['required']
+            ]);
+            $requestData = [
+                'brand_name'=>$request->brand_name,
+                'brand_slug'=>strtolower(str_replace('','-',$request->brand_name)),
+                // 'brand_image'=>$this->uploadImage(request()->file('brand_image'))
+            ];
+            if($request->hasFile('brand_image')){
+                $requestData['brand_image']=$this->uploadImage(request()->file('brand_image'));
+            }
+            $brand->update($requestData);
+            return redirect()->route('brands.index')->withMessage('Brand Update Successfully');
+        }catch(QueryException $e){
+            return redirect()->back()->withInput()->withErrors($e->getMessage());
+
+        }
+        // $image =$request->file('brand_image');
+        // $fileName = hexdec(uniqid()).'.'.
+        //     $image->getClientOriginalExtension();
+        // 'Image'::make($image)->resize(300,300)->save('upload/brand/'.$fileName);
+        // $save_url = 'upload/brand/'.$fileName;
+        // $brand->update([
+        //     'brand_name'=>$request->brand_name,
+        //     'brand_slug'=>strtolower(str_replace('','-',$request->brand_name)),
+        //     'brand_image'=>$this->uploadImage(request()->file('brand_image'))
+        // ]);
+        
+
+        
     }
+
+
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Brand $brand)
     {
-        $brand->delete();
+        // $brand->delete();
 
-        return redirect()->route('brands.index');
+        // return redirect()->route('brands.index');
+        try {
+            $brand -> delete();
+            return redirect()->route('brands.index')->withMessage('Brand Deleted Successfully');
+        }catch(QueryException $e){
+            return redirect()->back()->withInput()->withErrors($e->getMessage());
+
+        }
+    }
+
+    public function uploadImage($file)
+    {
+        $fileName =  time().'.'.$file->getClientOriginalExtension();
+        'Image'::make($file)->resize(200,200)->save(storage_path().'/app/public/brand/'.$fileName);
+        return $fileName;
     }
 }

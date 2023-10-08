@@ -19,7 +19,9 @@
                                id="inputTitle"
                                name="brand_name"
                                value="">
-
+                        @error('brand_name')
+                            <p class="text-danger">{{$message}}</p>
+                        @enderror
                     </div>
                 </div>
 

@@ -18,8 +18,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::get('/dashboard', function () {
-    return view('admin.admin_dashboard');
+Route::get('/home', function () {
+    return view('admin.home.admin_dashboard');
 });
 
 

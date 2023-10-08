@@ -30,7 +30,8 @@
                            class="form-control"
                            id="inputPicture"
                            name="brand_image"
-                           value="{{old('brand_image',$brand->brand_image)}}">
+                           value="{{old('brand_image')}}">
+                           <img src="/storage/brand/{{$brand->brand_image}}" style="width: 70px;height: 40px">
 
                     @error('brand_image')
                     <div class="alert alert-danger text-danger">{{ $message }}</div>

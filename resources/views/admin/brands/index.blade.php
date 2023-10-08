@@ -9,6 +9,13 @@
             <a class=" btn btn-info" href="{{route('brands.create')}}">Create</a>
         </div>
     </div>
+    @if(session('message'))
+    <div class="alert alert-success">
+        <span class="close" data-dismiss="alert">
+        </span>
+        <strong>{{session('message')}}</strong>
+    </div>
+    @endif
 <table class="table table-hover my-0">
 <thead>
 <tr>
@@ -24,7 +31,8 @@
     <td>{{$key+1}}</td>
     <td class="d-none d-xl-table-cell">{{$brand->brand_name}}</td>
 
-    <td> <img src="{{asset("$brand->brand_image")}}" style="width: 70px;height: 40px"></td>
+    {{-- <td> <img src="{{asset("$brand->brand_image")}}" style="width: 70px;height: 40px"></td> --}}
+    <td> <img src="/storage/brand/{{$brand->brand_image}}" style="width: 70px;height: 40px"></td>
     <td>
         <a class="btn btn-info btn-sm" href="{{route('brands.show',['brand' =>$brand->id])}}">show</a>
         <a class="btn btn-warning btn-sm" href="{{route('brands.edit',['brand' =>$brand->id])}}">Edit</a>
